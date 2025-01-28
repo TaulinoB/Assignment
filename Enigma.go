@@ -119,9 +119,4 @@ func main() {
 	// Encrypt the message
 	encrypted := enigma.Encrypt(message)
 	fmt.Printf("Encrypted Message: %s\n", encrypted)
-
-	// Decrypting the message (for demonstration, we will use the same method)
-	// Note: In a real Enigma machine, the same encryption process is used for decryption.
-	decrypted := enigma.Encrypt(encrypted) // Re-encrypting gives the original message
-	fmt.Printf("Decrypted Message: %s\n", decrypted)
 }
