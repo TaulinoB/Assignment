@@ -95,14 +95,14 @@ func main() {
 	// Solve the system using Cramer's Rule
 	solutions := cramer(matrix, b, n)
 
-	// Calculate elapsed time
-	elapsed := time.Since(start)
-
 	// Output the solution
 	fmt.Println("Solution:")
 	for i, val := range solutions {
 		fmt.Printf("x[%d] = %f\n", i, val)
 	}
+	
+	// Calculate elapsed time
+	elapsed := time.Since(start)
 
 	// Output the time taken
 	fmt.Printf("Time taken to solve the equations: %s\n", elapsed)
