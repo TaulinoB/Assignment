@@ -1,0 +1,69 @@
+from fastapi import FastAPI, File, UploadFile, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from PIL import Image
+from io import BytesIO
+import uvicorn
+
+# Initialize the FastAPI application
+api = FastAPI()
+
+# Configure CORS middleware
+api.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins
+    allow_methods=["*"],  # Allow all HTTP methods
+    allow_headers=["*"],  # Allow all headers
+)
+
+# Endpoint to analyze an uploaded image
+@api.post("/process-image/")
+async def process_image(image_file: UploadFile = File(...)):
+    """
+    Analyzes an uploaded image and returns its metadata.
+    """
+    try:
+        # Read the file content
+        file_data = await image_file.read()
+
+        # Convert the file content into a stream
+        image_stream = BytesIO(file_data)
+
+        # Open the image using PIL
+        img = Image.open(image_stream)
+
+        # Extract image properties
+        dimensions = img.size
+        img_format = img.format
+        color_mode = img.mode
+
+        # Return the image metadata
+        return {
+            "file_name": image_file.filename,
+            "width": dimensions[0],
+            "height": dimensions[1],
+            "format": img_format,
+            "color_mode": color_mode,
+        }
+
+    except Exception as error:
+        # Handle errors and return a 400 status code
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error processing image: {str(error)}",
+        )
+
+    finally:
+        # Ensure the file is closed after processing
+        await image_file.close()
+
+# Health check endpoint
+@api.get("/status/")
+async def check_status():
+    """
+    Returns the status of the API.
+    """
+    return {"status": "API is running"}
+
+# Run the application
+if __name__ == "__main__":
+    uvicorn.run(api, host="0.0.0.0", port=8000)
